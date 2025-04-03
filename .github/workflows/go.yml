@@ -1,0 +1,29 @@
+name: Build Go Application
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '>=1.22.0'
+        check-latest: true
+        
+    - name: Build application
+      run: CGO_ENABLED=0 go build -ldflags="-s -w" .
+      
+    - name: Upload binary artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: usque-macos
+        path: ./usque
